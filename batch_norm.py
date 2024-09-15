@@ -3,26 +3,33 @@ import numpy as np
 import torch
 from torch.nn import BatchNorm2d
 
+# Load both images
+image_1 = Image.open("dataset/aki_dog.jpg")
+image_2 = Image.open("dataset/wonder_cat.jpg")
 
-image = Image.open("dataset/aki_dog.jpg")
+# Convert both images to numpy arrays
+aki_dog = np.array(image_1)
+other_dog = np.array(image_2)
 
-aki_dog = np.array(image)
+# Convert to Torch tensors, add batch dimension and adjust dimensions
+aki_dog = torch.from_numpy(aki_dog).permute(2, 0, 1).unsqueeze(0).type(torch.FloatTensor)
+other_dog = torch.from_numpy(other_dog).permute(2, 0, 1).unsqueeze(0).type(torch.FloatTensor)
 
-print(aki_dog.shape)
-aki_dog = torch.from_numpy(aki_dog).permute(2,0,1).unsqueeze(0).type(torch.FloatTensor)
+# Stack both images along the batch dimension (axis 0)
+batch_images = torch.cat([aki_dog, other_dog], dim=0)
 
-print(aki_dog.shape)
-
+# Apply Batch Normalization to the batch
 normalizer = BatchNorm2d(3, affine=False)
-aki_dog_output = normalizer(aki_dog)
+batch_output = normalizer(batch_images)
 
-print(aki_dog_output)
-
-torch_bn2d_to_numpy = aki_dog_output.squeeze(0).permute(1,2,0).numpy()
-print(torch_bn2d_to_numpy)
-
-torch_bn2d_to_numpy_img = Image.fromarray(np.uint8(torch_bn2d_to_numpy * 255))
-print(torch_bn2d_to_numpy_img)
-
-torch_bn2d_to_numpy_img.show()
-
+# Convert the output back to images for both
+for i in range(batch_output.shape[0]):
+    # Clip the output to the valid range [0, 1]
+    torch_bn2d_to_numpy = batch_output[i].permute(1, 2, 0).numpy()
+    torch_bn2d_to_numpy = np.clip(torch_bn2d_to_numpy, 0, 1)  # Clip to [0, 1]
+    
+    # Convert back to 8-bit values and display the image
+    torch_bn2d_to_numpy_img = Image.fromarray(np.uint8(torch_bn2d_to_numpy * 255))
+    
+    print(f"Image {i + 1} after BatchNorm:")
+    torch_bn2d_to_numpy_img.save(f'results/normalized_image_{i}_torch.jpg')
