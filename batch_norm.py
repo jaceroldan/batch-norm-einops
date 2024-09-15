@@ -9,14 +9,14 @@ image_2 = Image.open("dataset/wonder_cat.jpg")
 
 # Convert both images to numpy arrays
 aki_dog = np.array(image_1)
-other_dog = np.array(image_2)
+wonder_cat = np.array(image_2)
 
 # Convert to Torch tensors, add batch dimension and adjust dimensions
 aki_dog = torch.from_numpy(aki_dog).permute(2, 0, 1).unsqueeze(0).type(torch.FloatTensor)
-other_dog = torch.from_numpy(other_dog).permute(2, 0, 1).unsqueeze(0).type(torch.FloatTensor)
+wonder_cat = torch.from_numpy(wonder_cat).permute(2, 0, 1).unsqueeze(0).type(torch.FloatTensor)
 
 # Stack both images along the batch dimension (axis 0)
-batch_images = torch.cat([aki_dog, other_dog], dim=0)
+batch_images = torch.cat([aki_dog, wonder_cat], dim=0)
 
 # Apply Batch Normalization to the batch
 normalizer = BatchNorm2d(3, affine=False)

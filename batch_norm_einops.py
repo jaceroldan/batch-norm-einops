@@ -8,14 +8,14 @@ image_2 = Image.open("dataset/wonder_cat.jpg")
 
 # Convert both images to numpy arrays
 aki_dog = np.array(image_1, dtype=np.float32)
-other_dog = np.array(image_2, dtype=np.float32)
+wonder_cat = np.array(image_2, dtype=np.float32)
 
 # Rearrange dimensions for both images and stack them to create a batch
 aki_dog = rearrange(aki_dog, 'h w c -> 1 c h w')  # Convert to batch format
-other_dog = rearrange(other_dog, 'h w c -> 1 c h w')
+wonder_cat = rearrange(wonder_cat, 'h w c -> 1 c h w')
 
 # Stack both images along the batch dimension (axis 0)
-batch_images = np.concatenate([aki_dog, other_dog], axis=0)  # Shape: (2, c, h, w)
+batch_images = np.concatenate([aki_dog, wonder_cat], axis=0)  # Shape: (2, c, h, w)
 
 # Compute mean and variance per channel across the batch (like BatchNorm2d)
 MEAN = reduce(batch_images, 'b c h w -> c () ()', 'mean')  # Single mean across batch
