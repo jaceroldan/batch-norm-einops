@@ -1,0 +1,4 @@
+torch==2.4.1
+numpy==2.1.1
+einops==0.8.0
+pillow==10.4.0
